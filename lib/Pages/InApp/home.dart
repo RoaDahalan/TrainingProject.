@@ -49,12 +49,34 @@ class _HomeState extends State<Home> {
         'isFavorite': true,
       },
       {
-        'title': 'Service Category',
+        'title': 'Hall Category',
         'subtitle': 'New Music Event on Dubai Botek for Valentine Day',
         'image': 'assets/image.png',
         'isFavorite': false,
       },
     ];
+
+
+    List<Map<String, dynamic>> filteredItems = [];
+    TextEditingController searchController = TextEditingController();
+
+    @override
+    void initState() {
+      super.initState();
+      filteredItems = itemsData;
+    }
+
+    void updateSearch(String query) {
+      setState(() {
+        filteredItems = itemsData.where((item) =>
+        item['title'].toLowerCase().contains(query.toLowerCase()) ||
+            item['subtitle'].toLowerCase().contains(query.toLowerCase())
+        ).toList();
+      });
+    }
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -115,7 +137,7 @@ class _HomeState extends State<Home> {
                               ),
                             ),
 
-                          ...buildItemList(itemsData),
+                            ...buildItemList(filteredItems),
                           ],
                         ),
                       ),
@@ -128,7 +150,6 @@ class _HomeState extends State<Home> {
                 Padding(
                   padding: const EdgeInsets.only(top: 210 , left: 30 , right: 30),
                   child: Container(
-                    //width: 335,
                     height: 60,
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -142,16 +163,19 @@ class _HomeState extends State<Home> {
                         )
                       ],
                     ),
-                    child: Row(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 10),
-                          child: Icon(Icons.search_outlined , color: Color(0xFFAF8344) , size: 27,),
+                    child: TextField(
+                      controller: searchController,
+                      onChanged: updateSearch,
+                      decoration: InputDecoration(
+                        hintText: 'Find Event, space, volunteer...',
+                        prefixIcon: Icon(Icons.search_outlined , color: Color(0xFFAF8344) , size: 27,),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide.none
                         ),
-                        SizedBox(width: 5,),
-                        Text('Find Event, space,volunteer...' ,
-                          style: TextStyle(color: Colors.grey[400] , fontSize: 17 , fontWeight: FontWeight.bold),)
-                      ],
+                        filled: true,
+                        fillColor: Colors.white,
+                      ),
                     ),
                   ),
                 ),
